@@ -1,17 +1,12 @@
 {
   "version": 2,
   "name": "space-planner-frontend",
-  "functions": {},
-  "builds": [
-    {
-      "src": "public/**/*",
-      "use": "@vercel/static"
-    }
-  ],
+  "buildCommand": "echo 'No build needed for static files'",
+  "outputDirectory": "public",
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/public/$1"
+      "dest": "/$1"
     }
   ],
   "headers": [
