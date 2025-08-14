@@ -5,6 +5,10 @@ let currentYear = new Date().getFullYear();
 let adminCurrentMonth = new Date().getMonth();
 let adminCurrentYear = new Date().getFullYear();
 
+// Authentication state
+let isAdminAuthenticated = false;
+let currentUserType = null; // 'admin' or 'user'
+
 // Data storage
 let unavailableDates = new Set();
 let gioSelectedDates = new Set();
@@ -15,8 +19,8 @@ let appleCalendarConnected = false;
 // Admin password (in production, this should be properly secured)
 const ADMIN_PASSWORD = 'spaceman2024';
 
-// Railway API configuration
-const API_BASE_URL = window.location.origin + '/api';
+// API configuration - Railway backend URL
+const API_BASE_URL = 'https://planner-production-6f18.up.railway.app/api';
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
@@ -26,6 +30,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
+    // Always start on opening screen, clear any existing state
+    currentScreen = 'opening-screen';
+    isAdminAuthenticated = false;
+    currentUserType = null;
+    
+    // Clear any URL hash that might interfere
+    if (window.location.hash) {
+        window.history.replaceState(null, null, window.location.pathname);
+    }
+    
     showScreen('opening-screen');
     renderCalendar();
     renderAdminCalendar();
@@ -35,14 +49,30 @@ function initializeApp() {
 
 // Screen management
 function showScreen(screenId) {
+    // Ensure we have a valid screen ID
+    const targetScreen = document.getElementById(screenId);
+    if (!targetScreen) {
+        console.error(`Screen ${screenId} not found, defaulting to opening-screen`);
+        screenId = 'opening-screen';
+    }
+    
+    // Remove active class from all screens
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
     });
+    
+    // Add active class to target screen
     document.getElementById(screenId).classList.add('active');
     currentScreen = screenId;
+    
+    console.log(`Switched to screen: ${screenId}`);
 }
 
 function showCalendar() {
+    // Set user type as regular user (Gio)
+    currentUserType = 'user';
+    isAdminAuthenticated = false;
+    
     showScreen('calendar-screen');
     renderCalendar();
 }
@@ -53,6 +83,14 @@ function showDashboard() {
 }
 
 function showAdminPanel() {
+    // Only accessible if admin is authenticated
+    if (!isAdminAuthenticated) {
+        showNotification('Access denied - Kosmoboy authentication required', 'error');
+        showScreen('admin-login');
+        return;
+    }
+    
+    currentUserType = 'admin';
     showScreen('admin-panel');
     renderAdminCalendar();
 }
@@ -69,8 +107,10 @@ function goBack(screenId) {
 function validateAdmin() {
     const password = document.getElementById('admin-password').value;
     if (password === ADMIN_PASSWORD) {
+        isAdminAuthenticated = true;
+        currentUserType = 'admin';
         showAdminPanel();
-        showNotification('Admin access granted', 'success');
+        showNotification('Kosmoboy access granted', 'success');
     } else {
         showNotification('Invalid password', 'error');
     }

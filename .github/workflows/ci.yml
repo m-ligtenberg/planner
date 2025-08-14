@@ -1,0 +1,50 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Check for syntax errors
+      run: node -c server.js
+      
+    - name: Validate JSON files
+      run: |
+        if [ -f "package.json" ]; then
+          node -e "JSON.parse(require('fs').readFileSync('package.json', 'utf8'))"
+        fi
+        if [ -f "vercel.json" ]; then
+          node -e "JSON.parse(require('fs').readFileSync('vercel.json', 'utf8'))"
+        fi
+        
+    - name: Check HTML validation
+      run: |
+        # Basic HTML structure validation
+        if grep -q "<!DOCTYPE html>" public/index.html; then
+          echo "✅ HTML DOCTYPE found"
+        else
+          echo "❌ HTML DOCTYPE missing"
+          exit 1
+        fi
+        
+    - name: Security audit
+      run: npm audit --audit-level=high
+      continue-on-error: true
