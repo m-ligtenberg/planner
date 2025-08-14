@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Planner - When ya got time for the space man?</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👨🏻‍🚀</text></svg>">
+    <meta name="description" content="Space-themed calendar app for coordinating plans between Gio and Admin">
+    <meta name="theme-color" content="#667eea">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+    
+    <!-- Opening Screen -->
+    <div id="opening-screen" class="screen active">
+        <div class="opening-container">
+            <div class="space-title">
+                <h1>When ya got time for the space man? 👨🏻‍🚀</h1>
+                <p>Let's plan something awesome together!</p>
+            </div>
+            <div class="astronaut-animation">
+                <div class="floating-astronaut">🚀</div>
+            </div>
+            <button class="cosmic-btn" onclick="showCalendar()">
+                <span>Launch Planning</span>
+                <div class="btn-glow"></div>
+            </button>
+            <button class="admin-btn" onclick="showAdminLogin()">
+                Admin Panel
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Login -->
+    <div id="admin-login" class="screen">
+        <div class="admin-container">
+            <h2>🔒 Admin Access</h2>
+            <div class="login-form">
+                <input type="password" id="admin-password" placeholder="Enter admin password">
+                <button onclick="validateAdmin()">Access Admin Panel</button>
+                <button onclick="goBack('opening-screen')">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="screen">
+        <div class="admin-container">
+            <div class="admin-header">
+                <h2>🛠️ Admin Panel - Manage Your Availability</h2>
+                <button class="back-btn" onclick="showCalendar()">Back to Calendar</button>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="showTab('availability')">Unavailable Dates</button>
+                <button class="tab-btn" onclick="showTab('patterns')">Recurring Patterns</button>
+                <button class="tab-btn" onclick="showTab('calendar-sync')">Apple Calendar</button>
+                <button class="tab-btn" onclick="showTab('data-management')">Data Management</button>
+            </div>
+
+            <!-- Availability Tab -->
+            <div id="availability-tab" class="tab-content active">
+                <div class="admin-calendar-container">
+                    <div class="calendar-header">
+                        <button onclick="changeMonth(-1)">◀</button>
+                        <h3 id="admin-month-year"></h3>
+                        <button onclick="changeMonth(1)">▶</button>
+                    </div>
+                    <div class="admin-calendar" id="admin-calendar"></div>
+                    <div class="admin-actions">
+                        <button onclick="clearAllUnavailable()">Clear All</button>
+                        <button onclick="saveAvailability()">Save Changes</button>
+                    </div>
+                </div>
+                <div class="unavailable-legend">
+                    <div class="legend-item">
+                        <span class="legend-color available"></span>
+                        <span>Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color unavailable"></span>
+                        <span>Unavailable</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patterns Tab -->
+            <div id="patterns-tab" class="tab-content">
+                <div class="patterns-container">
+                    <h3>Recurring Unavailability Patterns</h3>
+                    <div class="add-pattern">
+                        <select id="pattern-type">
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                        <select id="pattern-day">
+                            <option value="0">Sunday</option>
+                            <option value="1">Monday</option>
+                            <option value="2">Tuesday</option>
+                            <option value="3">Wednesday</option>
+                            <option value="4">Thursday</option>
+                            <option value="5">Friday</option>
+                            <option value="6">Saturday</option>
+                        </select>
+                        <button onclick="addPattern()">Add Pattern</button>
+                    </div>
+                    <div class="patterns-list" id="patterns-list"></div>
+                </div>
+            </div>
+
+            <!-- Calendar Sync Tab -->
+            <div id="calendar-sync-tab" class="tab-content">
+                <div class="sync-container">
+                    <h3>Apple Calendar Integration</h3>
+                    <div class="sync-status" id="sync-status">
+                        <p>Connect your Apple Calendar to automatically sync your availability</p>
+                        <button onclick="connectAppleCalendar()">Connect Apple Calendar</button>
+                    </div>
+                    <div class="sync-settings" id="sync-settings" style="display: none;">
+                        <h4>Sync Settings</h4>
+                        <label>
+                            <input type="checkbox" id="auto-sync" checked>
+                            Automatic synchronization
+                        </label>
+                        <label>
+                            <input type="checkbox" id="all-day-events" checked>
+                            Include all-day events
+                        </label>
+                        <button onclick="manualSync()">Manual Sync Now</button>
+                        <button onclick="disconnectCalendar()">Disconnect</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Management Tab -->
+            <div id="data-management-tab" class="tab-content">
+                <div class="data-management">
+                    <h3>📁 Data Management</h3>
+                    <div class="data-actions">
+                        <button onclick="exportData()" class="export-btn">
+                            📤 Export Data
+                        </button>
+                        <button onclick="importData()" class="import-btn">
+                            📥 Import Data
+                        </button>
+                        <button onclick="clearAllData()" class="clear-btn">
+                            🗑️ Clear All Data
+                        </button>
+                    </div>
+                    <div class="sync-info">
+                        <h4>Railway Sync Status</h4>
+                        <p id="sync-info-text">Connected to Railway backend</p>
+                        <button onclick="testConnection()">Test Connection</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Calendar -->
+    <div id="calendar-screen" class="screen">
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <h2>🗓️ Space Planning Calendar</h2>
+                <div class="user-info">
+                    <span class="user-tag gio">Gio</span>
+                    <span class="user-tag admin">You (Admin)</span>
+                </div>
+            </div>
+            
+            <div class="calendar-nav">
+                <button onclick="changeCalendarMonth(-1)">◀</button>
+                <h3 id="calendar-month-year"></h3>
+                <button onclick="changeCalendarMonth(1)">▶</button>
+            </div>
+            
+            <div class="calendar-grid" id="calendar-grid"></div>
+            
+            <div class="calendar-legend">
+                <div class="legend-item">
+                    <span class="legend-color both-available"></span>
+                    <span>Both Available</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color gio-selected"></span>
+                    <span>Gio Selected</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color admin-unavailable"></span>
+                    <span>You're Unavailable</span>
+                </div>
+            </div>
+            
+            <div class="calendar-actions">
+                <button onclick="showDashboard()" class="cosmic-btn">View Plans Dashboard</button>
+                <button onclick="showAdminPanel()" class="admin-access-btn">Admin Panel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard-screen" class="screen">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h2>🚀 Mission Control Dashboard</h2>
+                <button class="back-btn" onclick="showCalendar()">Back to Calendar</button>
+            </div>
+            
+            <div class="dashboard-content">
+                <div class="mutual-times">
+                    <h3>🎯 Mutual Available Times</h3>
+                    <div class="time-slots" id="mutual-times-list"></div>
+                </div>
+                
+                <div class="confirmed-plans">
+                    <h3>✅ Confirmed Plans</h3>
+                    <div class="plans-list" id="confirmed-plans-list"></div>
+                </div>
+                
+                <div class="activity-suggestions">
+                    <h3>💡 Activity Suggestions</h3>
+                    <div class="suggestions-grid">
+                        <div class="suggestion-card">
+                            <h4>🎬 Movie Night</h4>
+                            <p>Perfect for evening plans</p>
+                            <button onclick="suggestActivity('Movie Night')">Suggest to Gio</button>
+                        </div>
+                        <div class="suggestion-card">
+                            <h4>☕ Coffee Date</h4>
+                            <p>Great for morning or afternoon</p>
+                            <button onclick="suggestActivity('Coffee Date')">Suggest to Gio</button>
+                        </div>
+                        <div class="suggestion-card">
+                            <h4>🍕 Dinner</h4>
+                            <p>Evening dining experience</p>
+                            <button onclick="suggestActivity('Dinner')">Suggest to Gio</button>
+                        </div>
+                        <div class="suggestion-card">
+                            <h4>🎮 Gaming Session</h4>
+                            <p>Indoor fun activity</p>
+                            <button onclick="suggestActivity('Gaming Session')">Suggest to Gio</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plan Details Modal -->
+    <div id="plan-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Plan Details</h3>
+                <span class="close" onclick="closePlanModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="plan-modal-body">
+                <!-- Plan details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
