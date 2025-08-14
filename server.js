@@ -31,7 +31,7 @@ app.use(helmet({
 
 app.use(cors({
     origin: isProduction ? [
-        process.env.RAILWAY_PUBLIC_DOMAIN,
+        'https://planner-production-6f18.up.railway.app',
         /\.vercel\.app$/,
         'https://space-planner-frontend.vercel.app'
     ] : '*',
