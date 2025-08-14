@@ -30,19 +30,15 @@ app.use(helmet({
 }));
 
 app.use(cors({
-    origin: isProduction ? [
-        'https://planner-production-6f18.up.railway.app',
-        /\.vercel\.app$/,
-        'https://space-planner-frontend.vercel.app'
-    ] : '*',
+    origin: true,
     credentials: true
 }));
 
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Serve static files from public directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Railway is API-only, Vercel serves static files
+// app.use(express.static(path.join(__dirname, 'public')));
 
 // Ensure data directory and file exist
 async function initializeData() {
@@ -91,9 +87,13 @@ async function writeData(data) {
 
 // Routes
 
-// Serve main app
+// Railway is API-only, frontend on Vercel
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.json({ 
+        message: 'Space Planner API Server 🚀', 
+        endpoints: '/api/health, /api/planner-data',
+        frontend: 'Deployed on Vercel'
+    });
 });
 
 // Health check for Railway
