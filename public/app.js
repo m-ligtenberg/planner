@@ -85,6 +85,13 @@ function showScreen(screenId) {
 }
 
 function showCalendar() {
+    // Require at least one user to be authenticated
+    if (!isGioAuthenticated && !isMichAuthenticated) {
+        showNotification('gotta login first to see the calendar', 'error');
+        showScreen('login-screen');
+        return;
+    }
+    
     showScreen('calendar-screen');
     renderCalendar();
 }
@@ -104,13 +111,13 @@ function validateUser(user) {
         currentUser = 'gio';
         isValid = true;
         showNotification('hey gio! welcome back', 'success');
-        showScreen('gio-panel');
+        showCalendar(); // Go to shared calendar first
     } else if (user === 'mich' && password === MICH_PASSWORD) {
         isMichAuthenticated = true;
         currentUser = 'mich';
         isValid = true;
         showNotification('hey mich! welcome back', 'success');
-        showScreen('mich-panel');
+        showCalendar(); // Go to shared calendar first
     } else {
         showNotification('nah, wrong password', 'error');
     }
@@ -348,16 +355,20 @@ function renderCalendar() {
         
         const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         
-        // Apply styling based on availability and selections
+        // Apply styling based on availability (read-only view)
         if (unavailableDates.has(dateString)) {
             dayElement.classList.add('admin-unavailable');
+            dayElement.title = "Mich is busy";
         } else if (gioSelectedDates.has(dateString)) {
             dayElement.classList.add('gio-selected');
+            dayElement.title = "Gio is available";
         } else {
-            dayElement.classList.add('both-available');
+            dayElement.classList.add('calendar-day-neutral');
+            dayElement.title = "No availability set";
         }
         
-        dayElement.addEventListener('click', () => handleDateClick(dateString, dayElement));
+        // Read-only calendar - no click events
+        dayElement.style.cursor = 'default';
         
         calendarGrid.appendChild(dayElement);
     }
