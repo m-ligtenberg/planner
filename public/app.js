@@ -6,8 +6,9 @@ let adminCurrentMonth = new Date().getMonth();
 let adminCurrentYear = new Date().getFullYear();
 
 // Authentication state
-let isAdminAuthenticated = false;
-let currentUserType = null; // 'admin' or 'user'
+let isGioAuthenticated = false;
+let isMichAuthenticated = false;
+let currentUser = null; // 'gio' or 'mich'
 
 // Data storage
 let unavailableDates = new Set();
@@ -17,8 +18,9 @@ let recurringPatterns = [];
 let appleCalendarConnected = false;
 let customActivities = [];
 
-// Admin password (in production, this should be properly secured)
-const ADMIN_PASSWORD = 'spaceman2024';
+// User passwords (in production, this should be properly secured)
+const GIO_PASSWORD = 'spaceman2024';
+const MICH_PASSWORD = 'spaceman2024';
 
 // API configuration - Railway backend URL
 const API_BASE_URL = 'https://planner-planner-gio.up.railway.app/api';
@@ -31,17 +33,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
-    // Always start on opening screen, clear any existing state
-    currentScreen = 'opening-screen';
-    isAdminAuthenticated = false;
-    currentUserType = null;
+    // Always start on login screen, clear any existing state
+    currentScreen = 'login-screen';
+    isGioAuthenticated = false;
+    isMichAuthenticated = false;
+    currentUser = null;
     
     // Clear any URL hash that might interfere
     if (window.location.hash) {
         window.history.replaceState(null, null, window.location.pathname);
     }
     
-    showScreen('opening-screen');
+    showScreen('login-screen');
     renderCalendar();
     renderAdminCalendar();
     renderDashboard();
@@ -82,12 +85,55 @@ function showScreen(screenId) {
 }
 
 function showCalendar() {
-    // Set user type as regular user (Gio)
-    currentUserType = 'user';
-    isAdminAuthenticated = false;
-    
     showScreen('calendar-screen');
     renderCalendar();
+}
+
+// New authentication functions
+function showLoginForm(user) {
+    showScreen(user + '-login');
+}
+
+function validateUser(user) {
+    const passwordInput = document.getElementById(user + '-password');
+    const password = passwordInput.value;
+    
+    let isValid = false;
+    if (user === 'gio' && password === GIO_PASSWORD) {
+        isGioAuthenticated = true;
+        currentUser = 'gio';
+        isValid = true;
+        showNotification('hey gio! welcome back', 'success');
+        showScreen('gio-panel');
+    } else if (user === 'mich' && password === MICH_PASSWORD) {
+        isMichAuthenticated = true;
+        currentUser = 'mich';
+        isValid = true;
+        showNotification('hey mich! welcome back', 'success');
+        showScreen('mich-panel');
+    } else {
+        showNotification('nah, wrong password', 'error');
+    }
+    
+    passwordInput.value = '';
+}
+
+function showGioPanel() {
+    if (!isGioAuthenticated) {
+        showNotification('you gotta login as gio first', 'error');
+        showScreen('gio-login');
+        return;
+    }
+    showScreen('gio-panel');
+}
+
+function showMichPanel() {
+    if (!isMichAuthenticated) {
+        showNotification('you gotta login as mich first', 'error');
+        showScreen('mich-login');
+        return;
+    }
+    showScreen('mich-panel');
 }
 
 function showDashboard() {
@@ -95,39 +141,8 @@ function showDashboard() {
     renderDashboard();
 }
 
-function showAdminPanel() {
-    // Only accessible if admin is authenticated
-    if (!isAdminAuthenticated) {
-        showNotification('Access denied - Kosmoboy authentication required', 'error');
-        showScreen('admin-login');
-        return;
-    }
-    
-    currentUserType = 'admin';
-    showScreen('admin-panel');
-    renderAdminCalendar();
-}
-
-function showAdminLogin() {
-    showScreen('admin-login');
-}
-
 function goBack(screenId) {
     showScreen(screenId);
-}
-
-// Admin authentication
-function validateAdmin() {
-    const password = document.getElementById('admin-password').value;
-    if (password === ADMIN_PASSWORD) {
-        isAdminAuthenticated = true;
-        currentUserType = 'admin';
-        showAdminPanel();
-        showNotification('Kosmoboy access granted', 'success');
-    } else {
-        showNotification('Invalid password', 'error');
-    }
-    document.getElementById('admin-password').value = '';
 }
 
 // Tab management
@@ -727,7 +742,7 @@ function addCustomActivity() {
     input.value = '';
     renderCustomActivities();
     saveStoredData();
-    showNotification(`"${activityName}" added to custom activities!`, 'success');
+    showNotification(`"${activityName}" added! let's do it`, 'success');
 }
 
 function removeCustomActivity(activityName) {
@@ -736,7 +751,7 @@ function removeCustomActivity(activityName) {
         customActivities.splice(index, 1);
         renderCustomActivities();
         saveStoredData();
-        showNotification(`"${activityName}" removed`, 'success');
+        showNotification(`"${activityName}" removed ✨`, 'success');
     }
 }
 
@@ -745,7 +760,7 @@ function renderCustomActivities() {
     if (!container) return;
     
     if (customActivities.length === 0) {
-        container.innerHTML = '<p style="color: rgba(255,255,255,0.6); font-style: italic;">No custom activities yet. Add one above!</p>';
+        container.innerHTML = '<p style="color: rgba(255,255,255,0.6); font-style: italic;">no ideas yet... add some above!</p>';
         return;
     }
     

@@ -20,58 +20,76 @@
     <div class="stars2"></div>
     <div class="stars3"></div>
     
-    <!-- Opening Screen -->
-    <div id="opening-screen" class="screen active">
-        <div class="opening-container">
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen active">
+        <div class="login-container">
             <div class="space-title">
                 <h1>When ya got time for the space man? 👨🏻‍🚀</h1>
-                <p>let's plan sum</p>
+                <p>who are you?</p>
             </div>
             <div class="astronaut-animation">
                 <div class="floating-astronaut">🚀</div>
             </div>
-            <button class="cosmic-btn" onclick="showCalendar()">
-                <span>Launch Planning</span>
-                <div class="btn-glow"></div>
-            </button>
-            <button class="admin-btn" onclick="showAdminLogin()">
-                Kosmoboy Panel
-            </button>
-        </div>
-    </div>
-
-    <!-- Admin Login -->
-    <div id="admin-login" class="screen">
-        <div class="admin-container">
-            <h2>🔒 Kosmoboy Access</h2>
-            <div class="login-form">
-                <input type="password" id="admin-password" placeholder="Enter kosmoboy password">
-                <button onclick="validateAdmin()">Access Kosmoboy Panel</button>
-                <button onclick="goBack('opening-screen')">Back</button>
+            
+            <div class="user-selection">
+                <div class="user-card" onclick="showLoginForm('gio')">
+                    <div class="user-avatar">👨‍🚀</div>
+                    <h3>gio</h3>
+                    <p>plan when you're free</p>
+                </div>
+                
+                <div class="user-card" onclick="showLoginForm('mich')">
+                    <div class="user-avatar">🌟</div>
+                    <h3>mich</h3>
+                    <p>manage your schedule</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Admin Panel -->
-    <div id="admin-panel" class="screen">
+    <!-- User Login Forms -->
+    <div id="gio-login" class="screen">
+        <div class="login-form-container">
+            <h2>👨‍🚀 hey gio</h2>
+            <div class="login-form">
+                <input type="password" id="gio-password" placeholder="what's your password?">
+                <button onclick="validateUser('gio')">let's go</button>
+                <button onclick="goBack('login-screen')">back</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="mich-login" class="screen">
+        <div class="login-form-container">
+            <h2>🌟 hey mich</h2>
+            <div class="login-form">
+                <input type="password" id="mich-password" placeholder="what's your password?">
+                <button onclick="validateUser('mich')">get in</button>
+                <button onclick="goBack('login-screen')">back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mich's Panel -->
+    <div id="mich-panel" class="screen">
         <div class="admin-container">
             <div class="admin-header">
-                <h2>🛠️ Kosmoboy Panel - Manage Your Availability</h2>
-                <button class="back-btn" onclick="showCalendar()">Back to Calendar</button>
+                <h2>🛠️ mich's corner - when u busy?</h2>
+                <button class="back-btn" onclick="showCalendar()">back to calendar</button>
             </div>
             
             <div class="admin-tabs">
-                <button class="tab-btn active" onclick="showTab('availability')">Unavailable Dates</button>
-                <button class="tab-btn" onclick="showTab('patterns')">Recurring Patterns</button>
-                <button class="tab-btn" onclick="showTab('calendar-sync')">Apple Calendar</button>
-                <button class="tab-btn" onclick="showTab('data-management')">Data Management</button>
+                <button class="tab-btn active" onclick="showTab('availability')">when i'm busy</button>
+                <button class="tab-btn" onclick="showTab('patterns')">weekly stuff</button>
+                <button class="tab-btn" onclick="showTab('calendar-sync')">apple cal sync</button>
+                <button class="tab-btn" onclick="showTab('data-management')">backup stuff</button>
             </div>
 
             <!-- Availability Tab -->
             <div id="availability-tab" class="tab-content active">
                 <div class="admin-instructions">
-                    <h4>📅 Manage Your Availability</h4>
-                    <p>Click on dates to mark them as <strong>unavailable</strong>. Available dates are shown in green, unavailable dates in red.</p>
+                    <h4>📅 mark when ur busy</h4>
+                    <p>just click on dates when you can't hang. green = free, red = nah.</p>
                 </div>
                 
                 <div class="admin-calendar-container">
@@ -82,21 +100,21 @@
                     </div>
                     <div class="admin-calendar" id="admin-calendar"></div>
                     <div class="admin-actions">
-                        <button onclick="clearAllUnavailable()" class="clear-btn">🗑️ Clear All Unavailable</button>
-                        <button onclick="saveAvailability()" class="save-btn">💾 Save Changes</button>
+                        <button onclick="clearAllUnavailable()" class="clear-btn">🗑️ clear everything</button>
+                        <button onclick="saveAvailability()" class="save-btn">💾 save it</button>
                     </div>
                 </div>
                 
                 <div class="unavailable-legend">
-                    <h5>Legend:</h5>
+                    <h5>what's what:</h5>
                     <div class="legend-items">
                         <div class="legend-item">
                             <span class="legend-color available"></span>
-                            <span>Available (clickable)</span>
+                            <span>free (click to mark busy)</span>
                         </div>
                         <div class="legend-item">
                             <span class="legend-color unavailable"></span>
-                            <span>Unavailable (click to remove)</span>
+                            <span>busy (click to free up)</span>
                         </div>
                     </div>
                 </div>
@@ -176,11 +194,53 @@
         </div>
     </div>
 
+    <!-- Gio's Panel -->
+    <div id="gio-panel" class="screen">
+        <div class="user-container">
+            <div class="user-header">
+                <h2>🚀 gio's space - mark when you're free</h2>
+                <button class="back-btn" onclick="showCalendar()">back to calendar</button>
+            </div>
+            
+            <div class="user-instructions">
+                <h4>📅 show when you're available</h4>
+                <p>click on dates when you're free to hang. green = available, gray = not selected.</p>
+            </div>
+            
+            <div class="user-calendar-container">
+                <div class="calendar-header">
+                    <button onclick="changeGioMonth(-1)">◀</button>
+                    <h3 id="gio-month-year"></h3>
+                    <button onclick="changeGioMonth(1)">▶</button>
+                </div>
+                <div class="gio-calendar" id="gio-calendar"></div>
+                <div class="user-actions">
+                    <button onclick="clearGioSelections()" class="clear-btn">🗑️ clear all</button>
+                    <button onclick="saveGioSelections()" class="save-btn">💾 save availability</button>
+                </div>
+            </div>
+            
+            <div class="user-legend">
+                <h5>what's what:</h5>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="legend-color gio-available"></span>
+                        <span>i'm free (click to unselect)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color gio-unavailable"></span>
+                        <span>not selected (click to mark free)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Calendar -->
     <div id="calendar-screen" class="screen">
         <div class="calendar-container">
             <div class="calendar-header">
-                <h2>🗓️ Space Planning Calendar</h2>
+                <h2>🗓️ when we free?</h2>
                 <div class="user-info">
                     <span class="user-tag gio">Gio</span>
                     <span class="user-tag admin">Mich</span>
@@ -198,21 +258,22 @@
             <div class="calendar-legend">
                 <div class="legend-item">
                     <span class="legend-color both-available"></span>
-                    <span>Both Available</span>
+                    <span>both free!</span>
                 </div>
                 <div class="legend-item">
                     <span class="legend-color gio-selected"></span>
-                    <span>Gio Selected</span>
+                    <span>gio's good</span>
                 </div>
                 <div class="legend-item">
                     <span class="legend-color admin-unavailable"></span>
-                    <span>Mich is Unavailable</span>
+                    <span>mich's busy</span>
                 </div>
             </div>
             
             <div class="calendar-actions">
-                <button onclick="showDashboard()" class="cosmic-btn">View Plans Dashboard</button>
-                <button onclick="showAdminPanel()" class="admin-access-btn">Mich's Panel</button>
+                <button onclick="showDashboard()" class="cosmic-btn">see our plans</button>
+                <button onclick="showGioPanel()" class="user-access-btn">gio's availability</button>
+                <button onclick="showMichPanel()" class="admin-access-btn">mich's schedule</button>
             </div>
         </div>
     </div>
@@ -222,31 +283,31 @@
         <div class="dashboard-container">
             <div class="dashboard-header">
                 <h2>🚀 Mission Control Dashboard</h2>
-                <button class="back-btn" onclick="showCalendar()">Back to Calendar</button>
+                <button class="back-btn" onclick="showCalendar()">back to calendar</button>
             </div>
             
             <div class="dashboard-content">
                 <div class="mutual-times">
-                    <h3>🎯 Mutual Available Times</h3>
+                    <h3>🎯 when we both free</h3>
                     <div class="time-slots" id="mutual-times-list"></div>
                 </div>
                 
                 <div class="confirmed-plans">
-                    <h3>✅ Confirmed Plans</h3>
+                    <h3>✅ locked in plans</h3>
                     <div class="plans-list" id="confirmed-plans-list"></div>
                 </div>
                 
                 <div class="custom-activity-section">
-                    <h3>✨ Create Custom Activity</h3>
+                    <h3>✨ what we wanna do</h3>
                     <div class="activity-creator">
                         <div class="activity-input-group">
-                            <input type="text" id="custom-activity-input" placeholder="Enter activity name (e.g., Movie Night, Coffee Date, Hiking...)" maxlength="50">
-                            <button onclick="addCustomActivity()" class="add-activity-btn">➕ Add Activity</button>
+                            <input type="text" id="custom-activity-input" placeholder="what sounds fun? (movie night, coffee, hike...)" maxlength="50">
+                            <button onclick="addCustomActivity()" class="add-activity-btn">➕ add it</button>
                         </div>
-                        <p class="activity-note">💡 Both Mich and Gio can create activities for available dates</p>
+                        <p class="activity-note">💡 both mich and gio can add stuff</p>
                         
                         <div class="saved-activities" id="saved-activities">
-                            <h4>🎯 Your Custom Activities:</h4>
+                            <h4>🎯 our ideas:</h4>
                             <div class="activities-list" id="custom-activities-list">
                                 <!-- Custom activities will appear here -->
                             </div>

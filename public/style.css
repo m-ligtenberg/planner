@@ -55,8 +55,8 @@ body {
     display: block;
 }
 
-/* Opening Screen */
-.opening-container {
+/* Login Screen */
+.login-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -80,6 +80,62 @@ body {
     font-size: 1.2rem;
     margin-bottom: 3rem;
     color: #b8c6db;
+}
+
+.user-selection {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.user-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    min-width: 200px;
+}
+
+.user-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.user-avatar {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.user-card h3 {
+    font-size: 1.5rem;
+    margin: 10px 0;
+    color: #667eea;
+}
+
+.user-card p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.login-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+}
+
+.login-form-container h2 {
+    margin-bottom: 30px;
+    color: #667eea;
 }
 
 @keyframes gradient-shift {
