@@ -51,7 +51,7 @@ function initializeApp() {
     showScreen('login-screen');
     renderCalendar();
     renderAdminCalendar();
-    renderGioCalendar();
+    // Don't render Gio calendar on init since it shares admin elements
     renderDashboard();
     renderCustomActivities();
     
@@ -450,10 +450,11 @@ function changeMonth(direction) {
     renderAdminCalendar();
 }
 
-// Gio Calendar Functions
+// Gio Calendar Functions - using admin calendar structure
 function renderGioCalendar() {
-    const gioCalendar = document.getElementById('gio-calendar');
-    const monthYearDisplay = document.getElementById('gio-month-year');
+    // When in Gio's panel, use the admin calendar elements
+    const gioCalendar = document.getElementById('admin-calendar');
+    const monthYearDisplay = document.getElementById('admin-month-year');
     
     if (!gioCalendar || !monthYearDisplay) return;
     
@@ -469,67 +470,51 @@ function renderGioCalendar() {
     
     gioCalendar.innerHTML = '';
     
-    // Add day headers
-    const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    dayHeaders.forEach(day => {
-        const dayHeader = document.createElement('div');
-        dayHeader.className = 'calendar-day-header';
-        dayHeader.textContent = day;
-        dayHeader.style.fontWeight = 'bold';
-        dayHeader.style.color = '#00b894';
-        dayHeader.style.padding = '10px';
-        dayHeader.style.textAlign = 'center';
-        gioCalendar.appendChild(dayHeader);
-    });
-    
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < startingDayOfWeek; i++) {
         const emptyDay = document.createElement('div');
-        emptyDay.className = 'gio-calendar-day other-month';
+        emptyDay.className = 'admin-calendar-day other-month';
         gioCalendar.appendChild(emptyDay);
     }
     
     // Add days of the month
     for (let day = 1; day <= daysInMonth; day++) {
         const dayElement = document.createElement('div');
-        dayElement.className = 'gio-calendar-day';
+        dayElement.className = 'admin-calendar-day';
         dayElement.textContent = day;
         
         const dateString = `${gioCurrentYear}-${String(gioCurrentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         
-        // Apply styling based on Gio's selections
+        // Apply styling based on Gio's selections (inverted logic from Mich)
         if (gioSelectedDates.has(dateString)) {
-            dayElement.classList.add('gio-available');
+            dayElement.classList.add('unavailable'); // Green when selected as available
         } else {
-            dayElement.classList.add('gio-not-selected');
+            dayElement.classList.add('available'); // Gray when not selected
         }
         
-        // Check if Mich is busy on this date
-        if (unavailableDates.has(dateString)) {
-            dayElement.classList.add('mich-busy');
-            dayElement.title = "Mich is busy this day";
-        }
-        
-        dayElement.addEventListener('click', () => handleGioDateClick(dateString, dayElement));
+        dayElement.addEventListener('click', () => toggleGioAvailability(dateString, dayElement));
         
         gioCalendar.appendChild(dayElement);
     }
 }
 
-function handleGioDateClick(dateString, element) {
+function toggleGioAvailability(dateString, element) {
     if (gioSelectedDates.has(dateString)) {
-        // Remove selection
+        // Remove from available dates
         gioSelectedDates.delete(dateString);
-        element.classList.remove('gio-available');
-        element.classList.add('gio-not-selected');
+        element.classList.remove('unavailable');
+        element.classList.add('available');
         showNotification('Removed from your availability', 'success');
     } else {
-        // Add selection
+        // Add to available dates
         gioSelectedDates.add(dateString);
-        element.classList.remove('gio-not-selected');
-        element.classList.add('gio-available');
+        element.classList.remove('available');
+        element.classList.add('unavailable');
         showNotification('Added to your availability', 'success');
     }
+    
+    saveGioSelections();
+    renderCalendar();
 }
 
 function changeGioMonth(direction) {
@@ -552,7 +537,15 @@ function clearGioSelections() {
     
     gioSelectedDates.clear();
     renderGioCalendar();
+    renderCalendar();
     showNotification('Cleared all your availability', 'success');
+    saveGioSelections();
+}
+
+function saveGioAvailability() {
+    saveStoredData();
+    renderCalendar();
+    showNotification('Your availability saved successfully!', 'success');
 }
 
 // Date handling

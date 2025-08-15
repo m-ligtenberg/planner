@@ -196,40 +196,132 @@
 
     <!-- Gio's Panel -->
     <div id="gio-panel" class="screen">
-        <div class="user-container">
-            <div class="user-header">
+        <div class="admin-container">
+            <div class="admin-header">
                 <h2>🐒 gio's space - mark when you're free</h2>
                 <button class="back-btn" onclick="showCalendar()">back to calendar</button>
             </div>
             
-            <div class="user-instructions">
-                <h4>📅 show when you're available</h4>
-                <p>click on dates when you're free to hang. green = available, gray = not selected.</p>
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="showTab('availability')">when i'm free</button>
+                <button class="tab-btn" onclick="showTab('patterns')">weekly stuff</button>
+                <button class="tab-btn" onclick="showTab('calendar-sync')">apple cal sync</button>
+                <button class="tab-btn" onclick="showTab('data-management')">backup stuff</button>
             </div>
-            
-            <div class="user-calendar-container">
-                <div class="calendar-header">
-                    <button onclick="changeGioMonth(-1)">◀</button>
-                    <h3 id="gio-month-year"></h3>
-                    <button onclick="changeGioMonth(1)">▶</button>
+
+            <!-- Availability Tab -->
+            <div id="availability-tab" class="tab-content active">
+                <div class="admin-instructions">
+                    <h4>📅 mark when ur free</h4>
+                    <p>just click on dates when you're available to hang. green = free, gray = not marked.</p>
                 </div>
-                <div class="gio-calendar" id="gio-calendar"></div>
-                <div class="user-actions">
-                    <button onclick="clearGioSelections()" class="clear-btn">🗑️ clear all</button>
-                    <button onclick="saveGioSelections()" class="save-btn">💾 save availability</button>
-                </div>
-            </div>
-            
-            <div class="user-legend">
-                <h5>what's what:</h5>
-                <div class="legend-items">
-                    <div class="legend-item">
-                        <span class="legend-color gio-available"></span>
-                        <span>i'm free (click to unselect)</span>
+                
+                <div class="admin-calendar-container">
+                    <div class="calendar-header">
+                        <button onclick="changeGioMonth(-1)">◀</button>
+                        <h3 id="gio-month-year"></h3>
+                        <button onclick="changeGioMonth(1)">▶</button>
                     </div>
-                    <div class="legend-item">
-                        <span class="legend-color gio-unavailable"></span>
-                        <span>not selected (click to mark free)</span>
+                    <div class="admin-calendar" id="gio-calendar"></div>
+                    <div class="admin-actions">
+                        <button onclick="clearGioSelections()" class="clear-btn">🗑️ clear everything</button>
+                        <button onclick="saveGioAvailability()" class="save-btn">💾 save it</button>
+                    </div>
+                </div>
+                
+                <div class="unavailable-legend">
+                    <h5>what's what:</h5>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="legend-color available"></span>
+                            <span>free (click to mark busy)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color unavailable"></span>
+                            <span>available (click to remove)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patterns Tab -->
+            <div id="patterns-tab" class="tab-content">
+                <div class="patterns-container">
+                    <h3>Recurring Unavailability Patterns</h3>
+                    <div class="add-pattern">
+                        <select id="pattern-type">
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                        <select id="pattern-day">
+                            <option value="0">Sunday</option>
+                            <option value="1">Monday</option>
+                            <option value="2">Tuesday</option>
+                            <option value="3">Wednesday</option>
+                            <option value="4">Thursday</option>
+                            <option value="5">Friday</option>
+                            <option value="6">Saturday</option>
+                        </select>
+                        <input type="time" id="pattern-start-time" value="09:00">
+                        <input type="time" id="pattern-end-time" value="17:00">
+                        <button onclick="addRecurringPattern()">Add Pattern</button>
+                    </div>
+                    <div class="patterns-list" id="patterns-list"></div>
+                </div>
+            </div>
+
+            <!-- Calendar Sync Tab -->
+            <div id="calendar-sync-tab" class="tab-content">
+                <div class="sync-container">
+                    <div class="sync-status" id="sync-status">
+                        <h3>🍎 Apple Calendar Integration</h3>
+                        <p class="sync-description">Connect your Apple Calendar to automatically sync your unavailable dates.</p>
+                        <div class="sync-controls">
+                            <button onclick="connectAppleCalendar()" class="sync-btn">Connect Apple Calendar</button>
+                            <button onclick="testConnection()" class="test-btn">Test Connection</button>
+                        </div>
+                    </div>
+                    <div class="sync-settings" id="sync-settings" style="display: none;">
+                        <h4>Sync Settings</h4>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="auto-sync" checked>
+                                Automatically sync new events
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="two-way-sync">
+                                Enable two-way sync (experimental)
+                            </label>
+                        </div>
+                        <button onclick="disconnectAppleCalendar()" class="disconnect-btn">Disconnect</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Management Tab -->
+            <div id="data-management-tab" class="tab-content">
+                <div class="data-container">
+                    <h3>📊 Data Management</h3>
+                    <div class="data-actions">
+                        <div class="data-section">
+                            <h4>Export Data</h4>
+                            <p>Download a backup of all your planner data</p>
+                            <button onclick="exportData()" class="export-btn">📥 Export Data</button>
+                        </div>
+                        <div class="data-section">
+                            <h4>Import Data</h4>
+                            <p>Restore data from a previous backup</p>
+                            <input type="file" id="import-file" accept=".json" style="display: none;">
+                            <button onclick="document.getElementById('import-file').click()" class="import-btn">📤 Import Data</button>
+                        </div>
+                        <div class="data-section danger-zone">
+                            <h4>⚠️ Danger Zone</h4>
+                            <p>Clear all data (this cannot be undone)</p>
+                            <button onclick="clearAllData()" class="danger-btn">🗑️ Clear All Data</button>
+                        </div>
                     </div>
                 </div>
             </div>
