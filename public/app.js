@@ -19,7 +19,7 @@ let appleCalendarConnected = false;
 let customActivities = [];
 
 // User passwords (in production, this should be properly secured)
-const GIO_PASSWORD = 'spaceman2024';
+const GIO_PASSWORD = 'monkey';
 const MICH_PASSWORD = 'spaceman2024';
 
 // API configuration - Railway backend URL
