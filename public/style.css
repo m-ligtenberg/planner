@@ -616,6 +616,8 @@ body {
     background: rgba(255, 255, 255, 0.05);
     padding: 15px;
     border-radius: 15px;
+    max-width: 100%;
+    overflow-x: auto;
 }
 
 .calendar-day {
@@ -1022,8 +1024,23 @@ body {
     }
     
     .calendar-grid {
-        gap: 2px;
-        padding: 10px;
+        gap: 1px;
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+    
+    .calendar-day {
+        min-height: 35px;
+        font-size: 0.8rem;
+    }
+    
+    .calendar-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .calendar-header h3 {
+        font-size: 1.2rem;
     }
     
     .screen {
@@ -1037,5 +1054,10 @@ body {
     .modal-content {
         width: 95%;
         margin: 5% auto;
+    }
+    
+    .cosmic-btn, .admin-btn {
+        font-size: 0.9rem;
+        padding: 12px 20px;
     }
 }
