@@ -18,6 +18,10 @@ let recurringPatterns = [];
 let appleCalendarConnected = false;
 let customActivities = [];
 
+// Gio calendar state
+let gioCurrentMonth = new Date().getMonth();
+let gioCurrentYear = new Date().getFullYear();
+
 // User passwords (in production, this should be properly secured)
 const GIO_PASSWORD = 'monkey';
 const MICH_PASSWORD = 'spaceman2024';
@@ -47,6 +51,7 @@ function initializeApp() {
     showScreen('login-screen');
     renderCalendar();
     renderAdminCalendar();
+    renderGioCalendar();
     renderDashboard();
     renderCustomActivities();
     
@@ -132,6 +137,7 @@ function showGioPanel() {
         return;
     }
     showScreen('gio-panel');
+    renderGioCalendar();
 }
 
 function showMichPanel() {
@@ -442,6 +448,111 @@ function changeMonth(direction) {
         adminCurrentYear++;
     }
     renderAdminCalendar();
+}
+
+// Gio Calendar Functions
+function renderGioCalendar() {
+    const gioCalendar = document.getElementById('gio-calendar');
+    const monthYearDisplay = document.getElementById('gio-month-year');
+    
+    if (!gioCalendar || !monthYearDisplay) return;
+    
+    const firstDay = new Date(gioCurrentYear, gioCurrentMonth, 1);
+    const lastDay = new Date(gioCurrentYear, gioCurrentMonth + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
+    
+    monthYearDisplay.textContent = `${monthNames[gioCurrentMonth]} ${gioCurrentYear}`;
+    
+    gioCalendar.innerHTML = '';
+    
+    // Add day headers
+    const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    dayHeaders.forEach(day => {
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'calendar-day-header';
+        dayHeader.textContent = day;
+        dayHeader.style.fontWeight = 'bold';
+        dayHeader.style.color = '#00b894';
+        dayHeader.style.padding = '10px';
+        dayHeader.style.textAlign = 'center';
+        gioCalendar.appendChild(dayHeader);
+    });
+    
+    // Add empty cells for days before the first day of the month
+    for (let i = 0; i < startingDayOfWeek; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'gio-calendar-day other-month';
+        gioCalendar.appendChild(emptyDay);
+    }
+    
+    // Add days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'gio-calendar-day';
+        dayElement.textContent = day;
+        
+        const dateString = `${gioCurrentYear}-${String(gioCurrentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        
+        // Apply styling based on Gio's selections
+        if (gioSelectedDates.has(dateString)) {
+            dayElement.classList.add('gio-available');
+        } else {
+            dayElement.classList.add('gio-not-selected');
+        }
+        
+        // Check if Mich is busy on this date
+        if (unavailableDates.has(dateString)) {
+            dayElement.classList.add('mich-busy');
+            dayElement.title = "Mich is busy this day";
+        }
+        
+        dayElement.addEventListener('click', () => handleGioDateClick(dateString, dayElement));
+        
+        gioCalendar.appendChild(dayElement);
+    }
+}
+
+function handleGioDateClick(dateString, element) {
+    if (gioSelectedDates.has(dateString)) {
+        // Remove selection
+        gioSelectedDates.delete(dateString);
+        element.classList.remove('gio-available');
+        element.classList.add('gio-not-selected');
+        showNotification('Removed from your availability', 'success');
+    } else {
+        // Add selection
+        gioSelectedDates.add(dateString);
+        element.classList.remove('gio-not-selected');
+        element.classList.add('gio-available');
+        showNotification('Added to your availability', 'success');
+    }
+}
+
+function changeGioMonth(direction) {
+    gioCurrentMonth += direction;
+    if (gioCurrentMonth < 0) {
+        gioCurrentMonth = 11;
+        gioCurrentYear--;
+    } else if (gioCurrentMonth > 11) {
+        gioCurrentMonth = 0;
+        gioCurrentYear++;
+    }
+    renderGioCalendar();
+}
+
+function clearGioSelections() {
+    if (gioSelectedDates.size === 0) {
+        showNotification('No dates to clear', 'info');
+        return;
+    }
+    
+    gioSelectedDates.clear();
+    renderGioCalendar();
+    showNotification('Cleared all your availability', 'success');
 }
 
 // Date handling

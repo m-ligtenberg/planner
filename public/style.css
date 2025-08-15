@@ -371,6 +371,64 @@ body {
     pointer-events: none;
 }
 
+/* Gio Calendar Styles */
+.gio-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.gio-calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    font-weight: 600;
+    font-size: 1rem;
+    border: 2px solid transparent;
+    min-height: 45px;
+}
+
+.gio-calendar-day:hover {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.gio-calendar-day.gio-available {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    color: white;
+    border-color: #00b894;
+    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+}
+
+.gio-calendar-day.gio-not-selected {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.gio-calendar-day.mich-busy {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    border-color: #ff4757;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.gio-calendar-day.other-month {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
 .admin-instructions {
     background: rgba(255, 255, 255, 0.05);
     padding: 15px;
