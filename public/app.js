@@ -15,6 +15,7 @@ let gioSelectedDates = new Set();
 let confirmedPlans = [];
 let recurringPatterns = [];
 let appleCalendarConnected = false;
+let customActivities = [];
 
 // Admin password (in production, this should be properly secured)
 const ADMIN_PASSWORD = 'spaceman2024';
@@ -44,6 +45,18 @@ function initializeApp() {
     renderCalendar();
     renderAdminCalendar();
     renderDashboard();
+    renderCustomActivities();
+    
+    // Add Enter key support for activity input
+    const activityInput = document.getElementById('custom-activity-input');
+    if (activityInput) {
+        activityInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addCustomActivity();
+            }
+        });
+    }
+    
     console.log('✅ Space Planner initialized');
 }
 
@@ -133,7 +146,8 @@ async function saveStoredData() {
         gioSelectedDates: Array.from(gioSelectedDates),
         confirmedPlans: confirmedPlans,
         recurringPatterns: recurringPatterns,
-        appleCalendarConnected: appleCalendarConnected
+        appleCalendarConnected: appleCalendarConnected,
+        customActivities: customActivities
     };
     
     try {
@@ -174,6 +188,7 @@ async function loadStoredData() {
             confirmedPlans = data.confirmedPlans || [];
             recurringPatterns = data.recurringPatterns || [];
             appleCalendarConnected = data.appleCalendarConnected || false;
+            customActivities = data.customActivities || [];
             
             console.log('✅ Data loaded from Railway successfully');
             showNotification('Data loaded from server', 'success');
@@ -663,8 +678,8 @@ function renderConfirmedPlans() {
 }
 
 // Activity management
-async function confirmDate(dateString) {
-    const activity = prompt('What would you like to do on this date?') || 'Hangout';
+async function confirmDate(dateString, suggestedActivity = null) {
+    const activity = suggestedActivity || prompt('What would you like to do on this date?') || 'Hangout';
     const time = prompt('What time? (e.g., 7:00 PM)') || 'Evening';
     const location = prompt('Where? (optional)') || '';
     
@@ -693,6 +708,55 @@ async function confirmDate(dateString) {
     }
 }
 
+// Custom Activities Management
+function addCustomActivity() {
+    const input = document.getElementById('custom-activity-input');
+    const activityName = input.value.trim();
+    
+    if (!activityName) {
+        showNotification('Please enter an activity name', 'error');
+        return;
+    }
+    
+    if (customActivities.includes(activityName)) {
+        showNotification('This activity already exists', 'error');
+        return;
+    }
+    
+    customActivities.push(activityName);
+    input.value = '';
+    renderCustomActivities();
+    saveStoredData();
+    showNotification(`"${activityName}" added to custom activities!`, 'success');
+}
+
+function removeCustomActivity(activityName) {
+    const index = customActivities.indexOf(activityName);
+    if (index > -1) {
+        customActivities.splice(index, 1);
+        renderCustomActivities();
+        saveStoredData();
+        showNotification(`"${activityName}" removed`, 'success');
+    }
+}
+
+function renderCustomActivities() {
+    const container = document.getElementById('custom-activities-list');
+    if (!container) return;
+    
+    if (customActivities.length === 0) {
+        container.innerHTML = '<p style="color: rgba(255,255,255,0.6); font-style: italic;">No custom activities yet. Add one above!</p>';
+        return;
+    }
+    
+    container.innerHTML = customActivities.map(activity => `
+        <div class="custom-activity-tag" onclick="suggestActivity('${activity}')">
+            <span>${activity}</span>
+            <button class="remove-activity" onclick="event.stopPropagation(); removeCustomActivity('${activity}')" title="Remove activity">×</button>
+        </div>
+    `).join('');
+}
+
 function suggestActivity(activityName) {
     const availableDates = Array.from(gioSelectedDates).filter(date => {
         return !unavailableDates.has(date) && new Date(date) >= new Date();
@@ -704,7 +768,7 @@ function suggestActivity(activityName) {
     }
     
     const randomDate = availableDates[Math.floor(Math.random() * availableDates.length)];
-    confirmDate(randomDate);
+    confirmDate(randomDate, activityName);
 }
 
 // Apple Calendar export functions

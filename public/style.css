@@ -259,8 +259,12 @@ body {
 .admin-calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
+    gap: 4px;
     margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .admin-calendar-day {
@@ -268,25 +272,34 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
+    font-weight: 600;
+    font-size: 1rem;
+    border: 2px solid transparent;
+    min-height: 45px;
 }
 
 .admin-calendar-day:hover {
     transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .admin-calendar-day.unavailable {
     background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
     color: white;
+    border-color: #ff4757;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
 }
 
 .admin-calendar-day.available {
     background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
     color: white;
+    border-color: #00b894;
+    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
 }
 
 .admin-calendar-day.other-month {
@@ -294,10 +307,61 @@ body {
     pointer-events: none;
 }
 
+.admin-instructions {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+}
+
+.admin-instructions h4 {
+    margin: 0 0 10px 0;
+    color: #667eea;
+    font-size: 1.1rem;
+}
+
+.admin-instructions p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.5;
+}
+
 .admin-actions {
     display: flex;
-    gap: 10px;
+    gap: 15px;
     justify-content: center;
+    margin-top: 20px;
+}
+
+.save-btn, .clear-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.save-btn {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    color: white;
+}
+
+.save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 184, 148, 0.4);
+}
+
+.clear-btn {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+}
+
+.clear-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
 }
 
 .admin-actions button {
@@ -325,10 +389,22 @@ body {
 
 /* Legends */
 .unavailable-legend, .calendar-legend {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.unavailable-legend h5 {
+    margin: 0 0 10px 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+}
+
+.legend-items {
     display: flex;
     gap: 20px;
     justify-content: center;
-    margin-top: 20px;
     flex-wrap: wrap;
 }
 
@@ -715,11 +791,117 @@ body {
     transform: translateY(-2px);
 }
 
-.activity-suggestions {
+.custom-activity-section {
     grid-column: 1 / -1;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 15px;
     padding: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.activity-creator {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.activity-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#custom-activity-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#custom-activity-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+}
+
+#custom-activity-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.add-activity-btn {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.add-activity-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.activity-note {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin: 0;
+    text-align: center;
+    font-style: italic;
+}
+
+.saved-activities {
+    margin-top: 20px;
+}
+
+.saved-activities h4 {
+    margin: 0 0 15px 0;
+    color: #667eea;
+}
+
+.activities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.custom-activity-tag {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.custom-activity-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+}
+
+.remove-activity {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    font-size: 12px;
 }
 
 .suggestions-grid {

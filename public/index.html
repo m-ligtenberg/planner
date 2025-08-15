@@ -69,6 +69,11 @@
 
             <!-- Availability Tab -->
             <div id="availability-tab" class="tab-content active">
+                <div class="admin-instructions">
+                    <h4>📅 Manage Your Availability</h4>
+                    <p>Click on dates to mark them as <strong>unavailable</strong>. Available dates are shown in green, unavailable dates in red.</p>
+                </div>
+                
                 <div class="admin-calendar-container">
                     <div class="calendar-header">
                         <button onclick="changeMonth(-1)">◀</button>
@@ -77,18 +82,22 @@
                     </div>
                     <div class="admin-calendar" id="admin-calendar"></div>
                     <div class="admin-actions">
-                        <button onclick="clearAllUnavailable()">Clear All</button>
-                        <button onclick="saveAvailability()">Save Changes</button>
+                        <button onclick="clearAllUnavailable()" class="clear-btn">🗑️ Clear All Unavailable</button>
+                        <button onclick="saveAvailability()" class="save-btn">💾 Save Changes</button>
                     </div>
                 </div>
+                
                 <div class="unavailable-legend">
-                    <div class="legend-item">
-                        <span class="legend-color available"></span>
-                        <span>Available</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-color unavailable"></span>
-                        <span>Unavailable</span>
+                    <h5>Legend:</h5>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="legend-color available"></span>
+                            <span>Available (clickable)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color unavailable"></span>
+                            <span>Unavailable (click to remove)</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -227,28 +236,20 @@
                     <div class="plans-list" id="confirmed-plans-list"></div>
                 </div>
                 
-                <div class="activity-suggestions">
-                    <h3>💡 Activity Suggestions</h3>
-                    <div class="suggestions-grid">
-                        <div class="suggestion-card">
-                            <h4>🎬 Movie Night</h4>
-                            <p>Perfect for evening plans</p>
-                            <button onclick="suggestActivity('Movie Night')">Suggest to Gio</button>
+                <div class="custom-activity-section">
+                    <h3>✨ Create Custom Activity</h3>
+                    <div class="activity-creator">
+                        <div class="activity-input-group">
+                            <input type="text" id="custom-activity-input" placeholder="Enter activity name (e.g., Movie Night, Coffee Date, Hiking...)" maxlength="50">
+                            <button onclick="addCustomActivity()" class="add-activity-btn">➕ Add Activity</button>
                         </div>
-                        <div class="suggestion-card">
-                            <h4>☕ Coffee Date</h4>
-                            <p>Great for morning or afternoon</p>
-                            <button onclick="suggestActivity('Coffee Date')">Suggest to Gio</button>
-                        </div>
-                        <div class="suggestion-card">
-                            <h4>🍕 Dinner</h4>
-                            <p>Evening dining experience</p>
-                            <button onclick="suggestActivity('Dinner')">Suggest to Gio</button>
-                        </div>
-                        <div class="suggestion-card">
-                            <h4>🎮 Gaming Session</h4>
-                            <p>Indoor fun activity</p>
-                            <button onclick="suggestActivity('Gaming Session')">Suggest to Gio</button>
+                        <p class="activity-note">💡 Both Mich and Gio can create activities for available dates</p>
+                        
+                        <div class="saved-activities" id="saved-activities">
+                            <h4>🎯 Your Custom Activities:</h4>
+                            <div class="activities-list" id="custom-activities-list">
+                                <!-- Custom activities will appear here -->
+                            </div>
                         </div>
                     </div>
                 </div>
