@@ -20,7 +20,7 @@ let appleCalendarConnected = false;
 const ADMIN_PASSWORD = 'spaceman2024';
 
 // API configuration - Railway backend URL
-const API_BASE_URL = 'https://planner-production-6f18.up.railway.app/api';
+const API_BASE_URL = 'https://planner-planner-gio.up.railway.app/api';
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
